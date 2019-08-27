@@ -9,32 +9,29 @@ matrix:
   #  - env: JOB=IPA
 
   include:
-  # Runs unit tests without emulators.
-  - env: JOB=PR
-    sudo: false
-    language: node_js
-    node_js:
-      - "stable"
-    cache:
-      directories:
-        - node_modules
-    env:
-      - CXX=g++-4.8
-    addons:
-      apt:
-        sources:
-          - ubuntu-toolchain-r-test
-        packages:
-          - g++-4.8
+    # Runs unit tests without emulators.
+    - env: JOB=PR
+      sudo: false
+      language: node_js
+      node_js:
+        - "stable"
+      cache:
+        directories:
+          - node_modules
+      env:
+        - CXX=g++-4.8
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.8
 
-    install:
-      - npm install
-      - cd RNIapExample
-      - npm install
-      - cd ..
+      install:
+        - yarn install
+        - cd IapExample
+        - yarn install
+        - cd ..
 
-    script:
-      - npm run lint
-      - cd RNIapExample
-      - npm run lint
-      - cd ..
+      script:
+        - yarn validate
