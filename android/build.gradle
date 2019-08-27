@@ -50,5 +50,5 @@ repositories {
 dependencies {
   compile( 'com.facebook.react:react-native:+' )
   compile( 'com.android.billingclient:billing:1.1' )
-  implementation files('dep/in-app-purchasing-2.0.76.jar')
+  compile fileTree(dir: 'dep', include: ['*.jar'])
 }
