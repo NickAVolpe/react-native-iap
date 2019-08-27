@@ -64,25 +64,30 @@ export interface SubscriptionPurchase extends ProductPurchase {
   originalTransactionIdentifierIOS: string;
 }
 
+export interface AmazonSubscriptionPurchase extends ProductPurchase {
+  userIdAmazon: string
+  receiptId: string
+}
+
 export type Purchase = ProductPurchase | SubscriptionPurchase;
 
 /**
  * Init module for purchase flow. Required on Android. In ios it will check wheter user canMakePayment.
  * @returns {Promise<string>}
  */
-export function initConnection() : Promise<string>;
+export function initConnection(): Promise<string>;
 
 /**
  * End billing client. Will enchance android app's performance by releasing service. No-op on iOS.
  * @returns {Promise<void>}
  */
-export function endConnectionAndroid() : Promise<void>;
+export function endConnectionAndroid(): Promise<void>;
 
 /**
  * Consume all items in android. No-op in iOS.
  * @returns {Promise<void>}
  */
-export function consumeAllItemsAndroid() : Promise<void>;
+export function consumeAllItemsAndroid(): Promise<void>;
 
 /**
  * Get a list of products (consumable and non-consumable items, but not subscriptions)
@@ -112,13 +117,13 @@ export function getSubscriptions(skus: string[]): Promise<Subscription<string>[]
  * Gets an invetory of purchases made by the user regardless of consumption status
  * @returns {Promise<Purchase[]>}
  */
-export function getPurchaseHistory() : Promise<Purchase[]>;
+export function getPurchaseHistory(): Promise<Purchase[]>;
 
 /**
  * Get all purchases made by the user (either non-consumable, or haven't been consumed yet)
  * @returns {Promise<Purchase[]>}
  */
-export function getAvailablePurchases() : Promise<Purchase[]>;
+export function getAvailablePurchases(): Promise<Purchase[]>;
 
 /**
  * Buy a product
@@ -127,7 +132,7 @@ export function getAvailablePurchases() : Promise<Purchase[]>;
  * @param {string} sku The product's sku/ID
  * @returns {Promise<Purchase>}
  */
-export function buyProduct(sku: string) : Promise<ProductPurchase>;
+export function buyProduct(sku: string): Promise<ProductPurchase>;
 
 /**
  * Request a purchase
@@ -136,7 +141,7 @@ export function buyProduct(sku: string) : Promise<ProductPurchase>;
  * @param {boolean} andDangerouslyFinishTransactionAutomatically You should set this to false and call finishTransaction manually when you have delivered the purchased goods to the user. It defaults to true to provide backwards compatibility. Will default to false in version 4.0.0.
  * @returns {Promise<string>}
  */
-export function requestPurchase(sku: string, andDangerouslyFinishTransactionAutomatically?: boolean) : Promise<string>;
+export function requestPurchase(sku: string, andDangerouslyFinishTransactionAutomatically?: boolean): Promise<string>;
 
 /**
  * Create a subscription to a sku
@@ -147,7 +152,7 @@ export function requestPurchase(sku: string, andDangerouslyFinishTransactionAuto
  * @param {number} [prorationMode] Optional proration mode for upgrade/downgrade (Android only)
  * @returns {Promise<Purchase>}
  */
-export function buySubscription(sku: string, oldSku?: string, prorationMode?: number) : Promise<SubscriptionPurchase>;
+export function buySubscription(sku: string, oldSku?: string, prorationMode?: number): Promise<AmazonSubscriptionPurchase>; //this needs to switch back to iOS once confirmed works for amazon
 
 /**
  * Request a subscription to a sku
@@ -157,7 +162,7 @@ export function buySubscription(sku: string, oldSku?: string, prorationMode?: nu
  * @param {number} [prorationMode] Optional proration mode for upgrade/downgrade (Android only)
  * @returns {Promise<string>}
  */
-export function requestSubscription(sku: string, oldSku?: string, prorationMode?: number) : Promise<string>;
+export function requestSubscription(sku: string, oldSku?: string, prorationMode?: number): Promise<string>;
 
 /**
  * Buy a product with offer
@@ -168,7 +173,7 @@ export function requestSubscription(sku: string, oldSku?: string, prorationMode?
  *
  * @returns {Promise<void>}
  */
-export function buyProductWithOfferIOS(sku: string, forUser: string, withOffer: Apple.PaymentDiscount) : Promise<void>;
+export function buyProductWithOfferIOS(sku: string, forUser: string, withOffer: Apple.PaymentDiscount): Promise<void>;
 
 /**
  * Buy a product with a specified quantity (iOS only)
@@ -176,7 +181,7 @@ export function buyProductWithOfferIOS(sku: string, forUser: string, withOffer: 
  * @param {number} quantity The amount of product to buy
  * @returns {Promise<Purchase>}
  */
-export function buyProductWithQuantityIOS(sku: string, quantity: number) : Promise<ProductPurchase>;
+export function buyProductWithQuantityIOS(sku: string, quantity: number): Promise<ProductPurchase>;
 
 /**
  * Request a purchase with specified quantity (iOS only)
@@ -185,7 +190,7 @@ export function buyProductWithQuantityIOS(sku: string, quantity: number) : Promi
  * @param {number} quantity The amount of product to buy
  * @returns {Promise<Purchase>}
  */
-export function requestPurchaseWithQuantityIOS(sku: string, quantity: number) : Promise<string>;
+export function requestPurchaseWithQuantityIOS(sku: string, quantity: number): Promise<string>;
 
 /**
  * Finish Transaction (iOS only)
@@ -218,7 +223,7 @@ export function clearProductsIOS(): void;
  * @param {string} token The product's token (on Android)
  * @returns {Promise}
  */
-export function acknowledgePurchaseAndroid(token: string, developerPayload?: string) : Promise<PurchaseResult>;
+export function acknowledgePurchaseAndroid(token: string, developerPayload?: string): Promise<PurchaseResult>;
 
 /**
  * Consume a purchase (on Android.) No-op on iOS.
@@ -226,7 +231,7 @@ export function acknowledgePurchaseAndroid(token: string, developerPayload?: str
  * @param {string} token The product's token (on Android)
  * @returns {Promise}
  */
-export function consumePurchaseAndroid(token: string, developerPayload?: string) : Promise<PurchaseResult>;
+export function consumePurchaseAndroid(token: string, developerPayload?: string): Promise<PurchaseResult>;
 
 /**
  * Validate receipt for iOS.
@@ -250,22 +255,39 @@ export function validateReceiptAndroid(packageName: string, productId: string, p
  * @deprecated
  * @returns {callback(e: Event)}
  */
-export function addAdditionalSuccessPurchaseListenerIOS(fn: Function) : EmitterSubscription;
+export function addAdditionalSuccessPurchaseListenerIOS(fn: Function): EmitterSubscription;
 
 /**
  * Subscribe a listener when purchase is updated.
  * @returns {callback(e: ProductPurchase)}
  */
-export function purchaseUpdatedListener(fn: Function) : EmitterSubscription;
+export function purchaseUpdatedListener(fn: Function): EmitterSubscription;
 
 /**
  * Subscribe a listener when purchase got error.
  * @returns {callback(e: PurchaseError)}
  */
-export function purchaseErrorListener(fn: Function) : EmitterSubscription;
+export function purchaseErrorListener(fn: Function): EmitterSubscription;
 
 /**
  * Request current receipt base64 encoded (IOS only)
  * @returns {Promise<string>}
  */
 export function requestReceiptIOS(): Promise<string>;
+
+/**
+ * Get Amazon User data.
+ * @returns {Promise<UserData>}
+ */
+export function getUserData(): Promise<UserData>
+
+/**
+ * Notify Amazon of the fulfillment
+ * @param {string} receiptId
+ * @param {string} fulfillmentResult
+ * @returns {null}
+ */
+export function notifyFulfillmentAmazon(
+  receiptId: string,
+  fulfillmentResult: string
+)
